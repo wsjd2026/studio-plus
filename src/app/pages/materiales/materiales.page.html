@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Materiales de {{ nombreAsignatura }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/asignaturas"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button expand="full" (click)="tomarFoto()">
+    <ion-icon name="camera" slot="start"></ion-icon>
+    Tomar foto de pizarra / apunte
+  </ion-button>
+
+  <ion-list>
+    <ion-item *ngFor="let material of materiales">
+      <ion-thumbnail slot="start">
+        <img [src]="material.url" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ material.fecha | date:'dd/MM/yyyy HH:mm' }}</h2>
+        <p>{{ material.tipo === 'foto' ? 'Foto' : 'Archivo' }}</p>
+      </ion-label>
+      <ion-button fill="clear" slot="end" (click)="eliminar(material.id)">
+        <ion-icon name="trash" color="danger"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

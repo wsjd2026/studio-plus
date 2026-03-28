@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Calendario Académico</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-datetime
+    presentation="date"
+    [(ngModel)]="fechaSeleccionada"
+    (ionChange)="cargarEventos()">
+  </ion-datetime>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Eventos para {{ fechaSeleccionada | date:'dd/MM/yyyy' }}</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let evento of eventosDelDia">
+      <ion-icon [name]="evento.tipo === 'feriado' ? 'calendar' : 'school'" slot="start"></ion-icon>
+      <ion-label>
+        <h2>{{ evento.titulo }}</h2>
+        <p>{{ evento.descripcion }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" (click)="cargarFeriados()" color="secondary">
+    <ion-icon name="refresh" slot="start"></ion-icon>
+    Actualizar feriados
+  </ion-button>
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "estudio-plus",
+  "type": "angular",
+  "integrations": {
+    "capacitor": {}
+  }
+}

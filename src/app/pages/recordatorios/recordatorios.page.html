@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Recordatorios</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="agregarRecordatorio()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let rec of recordatorios" [color]="rec.prioridad === 'alta' ? 'danger' : (rec.prioridad === 'media' ? 'warning' : 'medium')">
+      <ion-label>
+        <h2>{{ rec.titulo }}</h2>
+        <p>Asignatura: {{ obtenerNombreAsignatura(rec.asignaturaId) }}</p>
+        <p>Fecha límite: {{ rec.fechaLimite | date:'dd/MM/yyyy HH:mm' }}</p>
+      </ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="rec.completado" (ionChange)="actualizarCompletado(rec)"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="agregarRecordatorio()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

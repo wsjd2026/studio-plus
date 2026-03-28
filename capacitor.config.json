@@ -1,0 +1,9 @@
+{
+  "appId": "com.estudio.plus",
+  "appName": "Estudio+",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
