@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AsignaturaService } from '../../services/asignatura.service';
-import { Asignatura } from '../../models/asignatura.model';
+import { Component } from '@angular/core';
+import { AsignaturaService } from '../services/asignatura.service';
+import { Asignatura } from '../models/asignatura.model';
 import { AlertController, NavController } from '@ionic/angular';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
   templateUrl: './asignaturas.page.html',
   styleUrls: ['./asignaturas.page.scss'],
 })
-export class AsignaturasPage implements OnInit {
+export class AsignaturasPage {
   asignaturas: Asignatura[] = [];
 
   constructor(
@@ -18,11 +18,7 @@ export class AsignaturasPage implements OnInit {
     private navCtrl: NavController
   ) {}
 
-  async ngOnInit() {
-    this.cargarAsignaturas();
-  }
-
-  async cargarAsignaturas() {
+  async ionViewWillEnter() {
     this.asignaturas = await this.asignaturaService.getAsignaturas();
   }
 
@@ -30,25 +26,27 @@ export class AsignaturasPage implements OnInit {
     const alert = await this.alertCtrl.create({
       header: 'Nueva asignatura',
       inputs: [
-        { name: 'nombre', placeholder: 'Nombre', type: 'text' },
-        { name: 'color', placeholder: 'Color (hex)', type: 'text', value: '#FFC107' },
-        { name: 'docente', placeholder: 'Docente', type: 'text' },
-        { name: 'descripcion', placeholder: 'Descripción', type: 'textarea' }
+        { name: 'nombre', placeholder: 'Nombre de la materia', type: 'text' },
+        { name: 'docente', placeholder: 'Nombre del docente', type: 'text' },
+        { name: 'descripcion', placeholder: 'Descripción', type: 'textarea' },
+        { name: 'color', placeholder: 'Color (hex)', type: 'text', value: '#4CAF50' }
       ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Guardar',
           handler: async (data) => {
+            if (!data.nombre.trim()) return false;
             const nueva: Asignatura = {
               id: uuidv4(),
               nombre: data.nombre,
-              color: data.color,
+              color: data.color || '#4CAF50',
               docente: data.docente,
               descripcion: data.descripcion
             };
             await this.asignaturaService.addAsignatura(nueva);
-            this.cargarAsignaturas();
+            this.asignaturas = await this.asignaturaService.getAsignaturas();
+            return true;
           }
         }
       ]
@@ -61,24 +59,18 @@ export class AsignaturasPage implements OnInit {
       header: 'Editar asignatura',
       inputs: [
         { name: 'nombre', value: asignatura.nombre, placeholder: 'Nombre', type: 'text' },
-        { name: 'color', value: asignatura.color, placeholder: 'Color (hex)', type: 'text' },
         { name: 'docente', value: asignatura.docente, placeholder: 'Docente', type: 'text' },
-        { name: 'descripcion', value: asignatura.descripcion, placeholder: 'Descripción', type: 'textarea' }
+        { name: 'descripcion', value: asignatura.descripcion, placeholder: 'Descripción', type: 'textarea' },
+        { name: 'color', value: asignatura.color, placeholder: 'Color (hex)', type: 'text' }
       ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Actualizar',
           handler: async (data) => {
-            const editada: Asignatura = {
-              ...asignatura,
-              nombre: data.nombre,
-              color: data.color,
-              docente: data.docente,
-              descripcion: data.descripcion
-            };
+            const editada: Asignatura = { ...asignatura, ...data };
             await this.asignaturaService.updateAsignatura(asignatura.id, editada);
-            this.cargarAsignaturas();
+            this.asignaturas = await this.asignaturaService.getAsignaturas();
           }
         }
       ]
@@ -87,8 +79,22 @@ export class AsignaturasPage implements OnInit {
   }
 
   async eliminar(id: string) {
-    await this.asignaturaService.deleteAsignatura(id);
-    this.cargarAsignaturas();
+    const confirm = await this.alertCtrl.create({
+      header: 'Eliminar',
+      message: '¿Seguro que quieres eliminar esta asignatura?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            await this.asignaturaService.deleteAsignatura(id);
+            this.asignaturas = await this.asignaturaService.getAsignaturas();
+          }
+        }
+      ]
+    });
+    await confirm.present();
   }
 
   verMateriales(asignaturaId: string) {
