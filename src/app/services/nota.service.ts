@@ -1,48 +1,68 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage-angular';
+import { DatabaseService } from './database.service';
 import { Nota } from '../models/nota.model';
 
 @Injectable({ providedIn: 'root' })
 export class NotaService {
-  private _storage: Storage | null = null;
 
-  constructor(private storage: Storage) {
-    this.init();
-  }
-
-  async init() {
-    this._storage = await this.storage.create();
-  }
+  constructor(private db: DatabaseService) {}
 
   async getNotas(): Promise<Nota[]> {
-    const list = (await this._storage?.get('notas')) || [];
-    return list.map((n: any) => ({ ...n, fechaModificacion: new Date(n.fechaModificacion) }));
+    const rows = await this.db.query('SELECT * FROM notas ORDER BY fecha_modificacion DESC');
+    return rows.map((r: any) => ({
+      id: r.id,
+      titulo: r.titulo,
+      contenido: r.contenido,
+      fechaModificacion: new Date(r.fecha_modificacion),
+      sincronizada: r.sincronizada === 1
+    }));
   }
 
   async addNota(nota: Nota): Promise<void> {
-    const notas = await this.getNotas();
-    notas.push(nota);
-    await this._storage?.set('notas', notas);
+    await this.db.run(
+      'INSERT INTO notas (id, titulo, contenido, fecha_modificacion, sincronizada) VALUES (?, ?, ?, ?, ?)',
+      [nota.id, nota.titulo, nota.contenido, nota.fechaModificacion.toISOString(), 0]
+    );
+    await this.enqueueSync('notas', 'INSERT', nota);
   }
 
   async updateNota(id: string, updated: Nota): Promise<void> {
-    let notas = await this.getNotas();
-    notas = notas.map(n => n.id === id ? updated : n);
-    await this._storage?.set('notas', notas);
+    await this.db.run(
+      'UPDATE notas SET titulo = ?, contenido = ?, fecha_modificacion = ?, sincronizada = ? WHERE id = ?',
+      [updated.titulo, updated.contenido, updated.fechaModificacion.toISOString(), 0, id]
+    );
+    await this.enqueueSync('notas', 'UPDATE', updated);
   }
 
   async deleteNota(id: string): Promise<void> {
-    let notas = await this.getNotas();
-    notas = notas.filter(n => n.id !== id);
-    await this._storage?.set('notas', notas);
+    await this.db.run('DELETE FROM notas WHERE id = ?', [id]);
+    await this.enqueueSync('notas', 'DELETE', { id });
   }
 
-  async syncNotas(): Promise<void> {
-    // Simular sincronización con un backend
-    const notas = await this.getNotas();
-    const pendientes = notas.filter(n => !n.sincronizada);
-    // Aquí iría la lógica HTTP para subir
-    pendientes.forEach(n => n.sincronizada = true);
-    await this._storage?.set('notas', notas);
+  async marcarSincronizadas(ids: string[]): Promise<void> {
+    if (ids.length === 0) return;
+    const placeholders = ids.map(() => '?').join(',');
+    await this.db.run(
+      `UPDATE notas SET sincronizada = 1 WHERE id IN (${placeholders})`,
+      ids
+    );
+  }
+
+  async getNotasPendientes(): Promise<Nota[]> {
+    const rows = await this.db.query('SELECT * FROM notas WHERE sincronizada = 0');
+    return rows.map((r: any) => ({
+      id: r.id,
+      titulo: r.titulo,
+      contenido: r.contenido,
+      fechaModificacion: new Date(r.fecha_modificacion),
+      sincronizada: false
+    }));
+  }
+
+  private async enqueueSync(tabla: string, operacion: string, datos: any): Promise<void> {
+    await this.db.run(
+      'INSERT INTO sync_queue (tabla, operacion, datos, created_at) VALUES (?, ?, ?, ?)',
+      [tabla, operacion, JSON.stringify(datos), new Date().toISOString()]
+    );
   }
 }

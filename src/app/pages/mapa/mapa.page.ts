@@ -1,6 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 import { Geolocation } from '@capacitor/geolocation';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-mapa',
@@ -9,22 +10,27 @@ import { Geolocation } from '@capacitor/geolocation';
 })
 export class MapaPage implements AfterViewInit {
   map: L.Map | null = null;
-  campusCenter: L.LatLngExpression = [19.4326, -99.1332];
-  edificios: { nombre: string; coords: L.LatLngExpression; descripcion?: string }[] = [
-    { nombre: 'Biblioteca Central', coords: [19.4326, -99.1332], descripcion: 'Horario: 8am-8pm' },
-    { nombre: 'Laboratorio de Computación', coords: [19.4330, -99.1325], descripcion: 'Sala 301' },
-    { nombre: 'Facultad de Ingeniería', coords: [19.4320, -99.1340], descripcion: 'Edificio A' }
+  campusCenter: [number, number] = [19.4517, -70.6830];
+
+  edificios: { nombre: string; coords: [number, number]; descripcion?: string }[] = [
+    { nombre: 'UAPA - Sede Santiago', coords: [19.4517, -70.6830], descripcion: 'Edificio principal' },
+    { nombre: 'Biblioteca UAPA', coords: [19.4520, -70.6825], descripcion: 'Horario: 8am-9pm' },
+    { nombre: 'Laboratorio de Computación', coords: [19.4515, -70.6835], descripcion: 'Lab 1 y Lab 2' },
+    { nombre: 'Auditorio', coords: [19.4522, -70.6832], descripcion: 'Eventos y conferencias' },
+    { nombre: 'Cafetería', coords: [19.4513, -70.6828], descripcion: 'Planta baja' }
   ];
 
+  constructor(private alertCtrl: AlertController) {}
+
   ngAfterViewInit() {
-    this.loadMap();
+    setTimeout(() => this.loadMap(), 300);
   }
 
   loadMap() {
     if (!this.map) {
       this.map = L.map('map').setView(this.campusCenter, 17);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; OpenStreetMap contributors'
       }).addTo(this.map);
       this.agregarMarcadores();
     }
@@ -33,13 +39,13 @@ export class MapaPage implements AfterViewInit {
   agregarMarcadores() {
     if (!this.map) return;
     this.edificios.forEach(ed => {
-      const marker = L.marker(ed.coords as L.LatLngExpression).addTo(this.map!);
+      const marker = L.marker(ed.coords).addTo(this.map!);
       marker.bindPopup(`
         <b>${ed.nombre}</b><br>
         ${ed.descripcion || ''}<br>
-        <button onclick="window.open('https://maps.google.com/?q=${ed.coords[0]},${ed.coords[1]}', '_system')">
+        <a href="https://maps.google.com/?q=${ed.coords[0]},${ed.coords[1]}" target="_system">
           Cómo llegar
-        </button>
+        </a>
       `);
     });
   }
@@ -50,9 +56,16 @@ export class MapaPage implements AfterViewInit {
       const { latitude, longitude } = position.coords;
       if (this.map) {
         this.map.setView([latitude, longitude], 17);
+        L.marker([latitude, longitude]).addTo(this.map)
+          .bindPopup('<b>Mi ubicación</b>').openPopup();
       }
     } catch (error) {
-      console.error('Error obteniendo ubicación', error);
+      const alert = await this.alertCtrl.create({
+        header: 'Ubicación',
+        message: 'No se pudo obtener tu ubicación. Verifica que el GPS esté activado.',
+        buttons: ['OK']
+      });
+      await alert.present();
     }
   }
 }

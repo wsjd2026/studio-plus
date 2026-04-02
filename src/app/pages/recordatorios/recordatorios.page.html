@@ -1,9 +1,12 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-title>Recordatorios</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="agregarRecordatorio()">
-        <ion-icon name="add"></ion-icon>
+        <ion-icon name="add-circle" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -11,19 +14,29 @@
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let rec of recordatorios" [color]="rec.prioridad === 'alta' ? 'danger' : (rec.prioridad === 'media' ? 'warning' : 'medium')">
-      <ion-label>
-        <h2>{{ rec.titulo }}</h2>
-        <p>Asignatura: {{ obtenerNombreAsignatura(rec.asignaturaId) }}</p>
-        <p>Fecha límite: {{ rec.fechaLimite | date:'dd/MM/yyyy HH:mm' }}</p>
-      </ion-label>
-      <ion-checkbox slot="end" [(ngModel)]="rec.completado" (ionChange)="actualizarCompletado(rec)"></ion-checkbox>
-    </ion-item>
+    <ion-item-sliding *ngFor="let rec of recordatorios">
+      <ion-item [color]="rec.completado ? '' : (rec.prioridad === 'alta' ? 'danger' : (rec.prioridad === 'media' ? 'warning' : ''))">
+        <ion-checkbox slot="start" [(ngModel)]="rec.completado" (ionChange)="actualizarCompletado(rec)"></ion-checkbox>
+        <ion-label [class.completado]="rec.completado">
+          <h2>{{ rec.titulo }}</h2>
+          <p>{{ obtenerNombreAsignatura(rec.asignaturaId) }}</p>
+          <p>{{ rec.fechaLimite | date:'dd/MM/yyyy HH:mm' }}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="rec.prioridad === 'alta' ? 'danger' : (rec.prioridad === 'media' ? 'warning' : 'medium')">
+          {{ rec.prioridad }}
+        </ion-badge>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="eliminarRecordatorio(rec.id)">
+          <ion-icon name="trash" slot="icon-only"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="agregarRecordatorio()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <ion-item *ngIf="recordatorios.length === 0" lines="none">
+    <ion-label class="ion-text-center">
+      <p>No hay recordatorios. Toca + arriba para crear uno.</p>
+    </ion-label>
+  </ion-item>
 </ion-content>

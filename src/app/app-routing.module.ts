@@ -3,7 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   { path: '', redirectTo: 'asignaturas', pathMatch: 'full' },
-  { path: 'asignaturas', loadChildren: () => import('./pages/asignaturas/asignaturas.module').then(m => m.AsignaturasPageModule) },
+  { path: 'asignaturas', loadChildren: () => import('./pages/asignaturas.module').then(m => m.AsignaturasPageModule) },
   { path: 'recordatorios', loadChildren: () => import('./pages/recordatorios/recordatorios.module').then(m => m.RecordatoriosPageModule) },
   { path: 'mapa', loadChildren: () => import('./pages/mapa/mapa.module').then(m => m.MapaPageModule) },
   { path: 'materiales/:asignaturaId', loadChildren: () => import('./pages/materiales/materiales.module').then(m => m.MaterialesPageModule) },

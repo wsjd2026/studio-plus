@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CalendarioService } from '../../services/calendario.service';
+import { DatabaseService } from '../../services/database.service';
 import { EventoCalendario } from '../../models/evento-calendario.model';
 import { AlertController } from '@ionic/angular';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-calendario',
@@ -11,58 +13,88 @@ import { AlertController } from '@ionic/angular';
 export class CalendarioPage implements OnInit {
   fechaSeleccionada: string = new Date().toISOString();
   eventosDelDia: EventoCalendario[] = [];
-  eventos: EventoCalendario[] = [];
+  todosLosEventos: EventoCalendario[] = [];
+  proximosEventos: EventoCalendario[] = [];
 
   constructor(
     private calendarioService: CalendarioService,
+    private db: DatabaseService,
     private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {
-    this.cargarEventos();
+    this.cargarTodo();
   }
 
-  async cargarEventos() {
-    // Cargar feriados (año actual)
+  async cargarTodo() {
+    this.todosLosEventos = [];
+
+    // Feriados de la API
     const year = new Date().getFullYear();
     this.calendarioService.getFeriados(year, 'DO').subscribe({
       next: (feriados) => {
-        this.eventos = feriados;
-        this.filtrarEventosPorFecha();
+        this.todosLosEventos = [...this.todosLosEventos, ...feriados];
+        this.actualizarVistas();
       },
-      error: async (err) => {
-        console.error('Error al cargar feriados', err);
-        const alert = await this.alertCtrl.create({
-          header: 'Error',
-          message: 'No se pudieron cargar los feriados. Usando eventos locales.',
-          buttons: ['OK']
-        });
-        await alert.present();
-        // Fallback a eventos locales
-        this.calendarioService.getEventosAcademicos().subscribe(academicos => {
-          this.eventos = academicos;
-          this.filtrarEventosPorFecha();
-        });
+      error: () => {
+        console.warn('No se pudieron cargar feriados');
       }
     });
 
-    // También puedes combinar con eventos académicos locales
+    // Eventos académicos locales
     this.calendarioService.getEventosAcademicos().subscribe(academicos => {
-      this.eventos = [...this.eventos, ...academicos];
-      this.filtrarEventosPorFecha();
+      this.todosLosEventos = [...this.todosLosEventos, ...academicos];
+      this.actualizarVistas();
     });
   }
 
-  filtrarEventosPorFecha() {
+  onFechaChange() {
+    this.actualizarVistas();
+  }
+
+  private actualizarVistas() {
     const fechaObj = new Date(this.fechaSeleccionada);
-    this.eventosDelDia = this.eventos.filter(evento => {
-      const eventoDate = new Date(evento.fecha);
-      return eventoDate.toDateString() === fechaObj.toDateString();
+    this.eventosDelDia = this.todosLosEventos.filter(ev => {
+      const evDate = new Date(ev.fecha);
+      return evDate.toDateString() === fechaObj.toDateString();
     });
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    this.proximosEventos = this.todosLosEventos
+      .filter(ev => new Date(ev.fecha) >= hoy)
+      .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+      .slice(0, 10);
   }
 
-  async cargarFeriados() {
-    // Forzar recarga
-    this.cargarEventos();
+  async agregarEvento() {
+    const alert = await this.alertCtrl.create({
+      header: 'Nuevo evento académico',
+      inputs: [
+        { name: 'titulo', placeholder: 'Título del evento', type: 'text' },
+        { name: 'descripcion', placeholder: 'Descripción', type: 'textarea' },
+        { name: 'fecha', type: 'datetime-local' }
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Guardar',
+          handler: (data) => {
+            if (!data.titulo?.trim()) return false;
+            const nuevo: EventoCalendario = {
+              id: uuidv4(),
+              titulo: data.titulo,
+              fecha: new Date(data.fecha || Date.now()),
+              tipo: 'academico',
+              descripcion: data.descripcion
+            };
+            this.todosLosEventos.push(nuevo);
+            this.actualizarVistas();
+            return true;
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 }
