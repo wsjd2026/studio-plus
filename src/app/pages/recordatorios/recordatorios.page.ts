@@ -1,9 +1,11 @@
+
 import { Component } from '@angular/core';
 import { RecordatorioService } from '../../services/recordatorio.service';
 import { AsignaturaService } from '../../services/asignatura.service';
 import { Recordatorio } from '../../models/recordatorio.model';
 import { Asignatura } from '../../models/asignatura.model';
 import { AlertController } from '@ionic/angular';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({
@@ -49,9 +51,13 @@ export class RecordatoriosPage {
       inputs: asigInputs,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { text: 'Siguiente', handler: (asignaturaId) => this.formRecordatorio(asignaturaId) }
+        {
+          text: 'Siguiente',
+          handler: (asignaturaId) => this.formRecordatorio(asignaturaId)
+        }
       ]
     });
+
     await selectAsig.present();
   }
 
@@ -59,8 +65,20 @@ export class RecordatoriosPage {
     const alert = await this.alertCtrl.create({
       header: 'Nuevo recordatorio',
       inputs: [
-        { name: 'titulo', placeholder: 'Título del recordatorio', type: 'text' },
-        { name: 'fechaLimite', type: 'datetime-local', min: new Date().toISOString().slice(0, 16) },
+        {
+          name: 'titulo',
+          placeholder: 'Título del recordatorio',
+          type: 'text'
+        },
+        {
+          name: 'fecha',
+          type: 'date',
+          min: new Date().toISOString().split('T')[0]
+        },
+        {
+          name: 'hora',
+          type: 'time'
+        },
         {
           name: 'prioridad',
           type: 'radio' as any,
@@ -87,21 +105,49 @@ export class RecordatoriosPage {
           text: 'Guardar',
           handler: async (data) => {
             if (!data.titulo?.trim()) return false;
+            if (!data.fecha || !data.hora) return false;
+
+            const [anio, mes, dia] = data.fecha.split('-').map(Number);
+            const [hora, minuto] = data.hora.split(':').map(Number);
+
+            const fechaHora = new Date(anio, mes - 1, dia, hora, minuto, 0);
+
             const nuevo: Recordatorio = {
               id: uuidv4(),
               titulo: data.titulo,
-              fechaLimite: new Date(data.fechaLimite || Date.now()),
+              fechaLimite: fechaHora,
               prioridad: data.prioridad || 'media',
               asignaturaId,
               completado: false
             };
+
             await this.recordatorioService.addRecordatorio(nuevo);
+
+            const permiso = await LocalNotifications.requestPermissions();
+
+            if (permiso.display === 'granted') {
+              await LocalNotifications.schedule({
+                notifications: [
+                  {
+                    id: parseInt(nuevo.id.replace(/\D/g, '').slice(0, 6)) || Math.floor(Math.random() * 100000),
+                    title: 'Recordatorio de tarea',
+                    body: nuevo.titulo,
+                    schedule: {
+                      at: fechaHora,
+                      allowWhileIdle: true
+                    }
+                  }
+                ]
+              });
+            }
+
             await this.cargarDatos();
             return true;
           }
         }
       ]
     });
+
     await alert.present();
   }
 
@@ -116,11 +162,21 @@ export class RecordatoriosPage {
           role: 'destructive',
           handler: async () => {
             await this.recordatorioService.deleteRecordatorio(id);
+
+            await LocalNotifications.cancel({
+              notifications: [
+                {
+                  id: parseInt(id.replace(/\D/g, '').slice(0, 6)) || 0
+                }
+              ]
+            });
+
             await this.cargarDatos();
           }
         }
       ]
     });
+
     await confirm.present();
   }
 
@@ -128,3 +184,4 @@ export class RecordatoriosPage {
     await this.recordatorioService.updateRecordatorio(rec.id, rec);
   }
 }
+
