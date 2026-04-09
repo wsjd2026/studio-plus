@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-title>Materiales de {{ nombreAsignatura }}</ion-title>
     <ion-buttons slot="start">
@@ -27,4 +27,47 @@
       </ion-button>
     </ion-item>
   </ion-list>
+</ion-content> -->
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/asignaturas"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title class="titulo-header">
+      Materiales de {{ nombreAsignatura }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="materiales-content">
+
+  <!-- Estado vacío -->
+  <div *ngIf="materiales.length === 0" class="empty-state">
+    <ion-icon name="image-outline"></ion-icon>
+    <p>No hay materiales aún. Toca el botón para agregar uno.</p>
+  </div>
+
+  <!-- Lista de materiales -->
+  <div class="material-card" *ngFor="let material of materiales">
+    <img [src]="material.url" class="material-img"/>
+
+    <div class="material-info">
+      <h3>{{ material.fecha | date:'dd/MM/yyyy HH:mm' }}</h3>
+      <p>{{ material.tipo === 'foto' ? 'Foto' : 'Archivo' }}</p>
+    </div>
+
+    <ion-button fill="clear" class="delete-btn" (click)="eliminar(material.id)">
+      <ion-icon name="trash-outline" color="danger"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Botón flotante para tomar foto -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="tomarFoto()">
+      <ion-icon name="camera-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>

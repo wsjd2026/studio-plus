@@ -1,0 +1,154 @@
+:root {
+  --color-primary: #4C6EF5;
+  --color-bg: #F5F7FA;
+  --color-card: #FFFFFF;
+  --color-text-strong: #1E1E1E;
+  --color-text-medium: #6B7280;
+  --color-success: #51CF66;
+}
+
+.compartir-content {
+  background: var(--color-bg);
+  padding: 16px;
+}
+
+/* BLE STATUS */
+.ble-status-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-card);
+  padding: 14px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.ble-icon {
+  font-size: 36px;
+  margin-right: 12px;
+}
+
+.ble-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.ble-info p {
+  margin: 4px 0 0;
+  color: var(--color-text-medium);
+}
+
+/* TITULOS */
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 16px 0 10px;
+  color: var(--color-text-strong);
+}
+
+/* MATERIAL CARD */
+.material-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-card);
+  padding: 12px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+.material-card.selected {
+  border: 2px solid var(--color-primary);
+}
+
+.material-card:active {
+  transform: scale(0.98);
+}
+
+.material-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.material-info h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.material-info p {
+  margin: 4px 0 0;
+  color: var(--color-text-medium);
+}
+
+.check-icon {
+  color: var(--color-success);
+  font-size: 24px;
+  margin-left: auto;
+}
+
+.share-btn {
+  margin-left: 8px;
+}
+
+/* SCAN CARD */
+.scan-card {
+  background: var(--color-card);
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+/* DEVICE CARD */
+.device-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-card);
+  padding: 12px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.device-icon {
+  font-size: 32px;
+  color: var(--color-primary);
+  margin-right: 12px;
+}
+
+.device-info h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.device-info p {
+  margin: 4px 0 0;
+  color: var(--color-text-medium);
+}
+
+.send-icon {
+  margin-left: auto;
+  font-size: 24px;
+  color: var(--color-primary);
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--color-text-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}

@@ -1,1 +1,72 @@
+:root {
+  --color-primary: #4C6EF5;
+  --color-primary-dark: #3B5BDB;
+  --color-bg: #F5F7FA;
+  --color-card: #FFFFFF;
+  --color-text-strong: #1E1E1E;
+  --color-text-medium: #6B7280;
+  --color-text-light: #9CA3AF;
+}
+
+.asignaturas-content {
+  padding: 16px;
+  background: var(--color-bg);
+}
+
+.titulo-header {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.asignatura-card {
+  margin: 12px 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  --background: var(--color-card);
+  position: relative;
+  padding-left: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.asignatura-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.color-bar {
+  width: 10px;
+  border-radius: 16px 0 0 16px;
+  margin-right: 16px;
+}
+
+.nombre-asignatura {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.docente {
+  font-size: 0.95rem;
+  color: var(--color-text-medium);
+  margin-top: 4px;
+}
+
+.descripcion {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin-top: 2px;
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 80px;
+  color: var(--color-text-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
 

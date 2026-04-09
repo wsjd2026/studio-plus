@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -39,4 +39,62 @@
       <p>No hay asignaturas. Toca + arriba para agregar.</p>
     </ion-label>
   </ion-item>
+</ion-content> -->
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title class="titulo-header">
+      Mis Asignaturas
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="agregarAsignatura()">
+        <ion-icon name="add-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="asignaturas-content">
+
+  <div *ngIf="asignaturas.length === 0" class="empty-state">
+    <ion-icon name="school-outline"></ion-icon>
+    <h3>No hay asignaturas</h3>
+    <p>Toca el botón + para agregar una nueva.</p>
+  </div>
+
+  <ion-list lines="none">
+    <ion-item-sliding *ngFor="let asignatura of asignaturas">
+
+      <ion-item class="asignatura-card" button (click)="verMateriales(asignatura.id)">
+        <div class="color-bar" [style.background]="asignatura.color"></div>
+
+        <ion-label>
+          <h2 class="nombre-asignatura">{{ asignatura.nombre }}</h2>
+          <p class="docente">👨‍🏫 {{ asignatura.docente }}</p>
+          <p class="descripcion">{{ asignatura.descripcion }}</p>
+        </ion-label>
+
+        <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="editar(asignatura)">
+          <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+        </ion-item-option>
+
+        <ion-item-option color="danger" (click)="eliminar(asignatura.id)">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+
+    </ion-item-sliding>
+  </ion-list>
+
 </ion-content>
+
+

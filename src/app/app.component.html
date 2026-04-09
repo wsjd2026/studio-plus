@@ -1,4 +1,4 @@
-<ion-app>
+<!-- <ion-app>
   <ion-menu contentId="main-content" type="overlay">
     <ion-header>
       <ion-toolbar color="primary">
@@ -19,6 +19,49 @@
           </ion-item>
         </ion-menu-toggle>
       </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+</ion-app> -->
+
+<ion-app>
+  <ion-menu contentId="main-content" type="overlay">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Estudio+</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="menu-content">
+
+      <!-- LOGO -->
+      <div class="menu-logo">
+        <div class="logo-circle">
+          <ion-icon name="school-outline"></ion-icon>
+        </div>
+
+        <h2>Studio<span>+</span></h2>
+        <p>Gestión Académica</p>
+      </div>
+
+      <!-- LISTA DE OPCIONES -->
+      <ion-list class="menu-list">
+        <ion-menu-toggle auto-hide="false" *ngFor="let page of appPages">
+          <ion-item
+            [routerLink]="page.url"
+            routerDirection="root"
+            routerLinkActive="selected"
+            lines="none"
+            detail="false">
+
+            <ion-icon slot="start" [name]="page.icon"></ion-icon>
+            <ion-label>{{ page.title }}</ion-label>
+
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+
     </ion-content>
   </ion-menu>
 

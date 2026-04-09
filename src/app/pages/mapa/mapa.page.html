@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -13,4 +13,67 @@
 </ion-header>
 <ion-content>
   <div id="map" style="height: 100%; width: 100%;"></div>
+</ion-content> -->
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title class="titulo-header">
+      Mapa del Campus
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="mapa-content">
+
+  <!-- Barra de búsqueda -->
+  <div class="search-container">
+    <ion-searchbar
+      placeholder="Buscar edificio, aula o área"
+      [(ngModel)]="busqueda"
+      (ionInput)="filtrarLugares()">
+    </ion-searchbar>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-container">
+    <ion-chip *ngFor="let filtro of filtros"
+              [outline]="filtroSeleccionado !== filtro.id"
+              (click)="seleccionarFiltro(filtro.id)">
+      <ion-icon [name]="filtro.icon"></ion-icon>
+      <ion-label>{{ filtro.nombre }}</ion-label>
+    </ion-chip>
+  </div>
+
+  <!-- Mapa -->
+  <div id="map" class="map-container"></div>
+
+  <!-- Botón flotante para centrar -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="centrarEnMiUbicacion()">
+      <ion-icon name="locate-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Tarjeta inferior (Bottom Sheet) -->
+  <div class="info-card" *ngIf="lugarSeleccionado">
+    <img [src]="lugarSeleccionado.imagen" class="info-img"/>
+
+    <div class="info-content">
+      <h2>{{ lugarSeleccionado.nombre }}</h2>
+      <p>{{ lugarSeleccionado.descripcion }}</p>
+
+      <ion-button expand="block" fill="solid" color="primary">
+        Cómo llegar
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" color="primary">
+        Ver detalles
+      </ion-button>
+    </div>
+  </div>
+
 </ion-content>

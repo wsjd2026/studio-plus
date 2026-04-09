@@ -1,0 +1,107 @@
+:root {
+  --color-primary: #4C6EF5;
+  --color-bg: #F5F7FA;
+  --color-card: #FFFFFF;
+  --color-text-strong: #1E1E1E;
+  --color-text-medium: #6B7280;
+  --color-danger: #FF6B6B;
+  --color-success: #51CF66;
+}
+
+.notas-content {
+  background: var(--color-bg);
+  padding: 16px;
+}
+
+/* ESTADO DE CONEXIÓN */
+.status-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-card);
+  padding: 14px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.status-icon {
+  font-size: 36px;
+  margin-right: 12px;
+}
+
+.status-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.status-info p {
+  margin: 4px 0 0;
+  color: var(--color-text-medium);
+}
+
+.pending-badge {
+  margin-left: auto;
+}
+
+/* TARJETAS DE NOTAS */
+.nota-card {
+  background: var(--color-card);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  position: relative;
+  transition: transform 0.15s ease;
+}
+
+.nota-card:active {
+  transform: scale(0.98);
+}
+
+.nota-card h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.fecha {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-medium);
+}
+
+.pendiente {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #FFA94D;
+  display: flex;
+  align-items: center;
+}
+
+.pendiente ion-icon {
+  margin-right: 4px;
+}
+
+/* BOTÓN ELIMINAR */
+.delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+}
+
+/* ESTADO VACÍO */
+.empty-state {
+  text-align: center;
+  margin-top: 60px;
+  color: var(--color-text-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}

@@ -1,0 +1,85 @@
+:root {
+  --color-primary: #4C6EF5;
+  --color-primary-dark: #3B5BDB;
+  --color-bg: #F5F7FA;
+  --color-card: #FFFFFF;
+  --color-text-strong: #1E1E1E;
+  --color-text-medium: #6B7280;
+  --color-text-light: #9CA3AF;
+}
+
+.calendario-content {
+  background: var(--color-bg);
+  padding: 16px;
+}
+
+.calendar-container {
+  background: var(--color-card);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.calendar-widget {
+  --background: transparent;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-text-strong);
+  margin: 12px 0;
+}
+
+.evento-card {
+  display: flex;
+  align-items: center;
+  background: var(--color-card);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.evento-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-right: 12px;
+  font-size: 22px;
+}
+
+.evento-info h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.evento-info p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-medium);
+}
+
+.evento-badge {
+  margin-left: auto;
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--color-text-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}

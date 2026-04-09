@@ -1,103 +1,116 @@
+
+
+
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Compartir apuntes</ion-title>
+
+    <ion-title class="titulo-header">
+      Compartir Apuntes
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <!-- Estado del Bluetooth -->
-  <ion-item lines="none">
-    <ion-chip [color]="bleAvailable ? 'success' : 'medium'" slot="start">
-      <ion-icon name="bluetooth"></ion-icon>
-      <ion-label>{{ bleAvailable ? 'BLE activo' : 'BLE no disponible' }}</ion-label>
-    </ion-chip>
-  </ion-item>
+<ion-content class="compartir-content">
 
-  <!-- Sección: Materiales disponibles -->
-  <ion-list-header>
-    <ion-label>1. Selecciona un material</ion-label>
-  </ion-list-header>
-  <ion-list>
-    <ion-item *ngFor="let material of materiales"
-              button
-              (click)="seleccionarMaterial(material)"
-              [color]="materialSeleccionado?.id === material.id ? 'light' : ''">
-      <ion-thumbnail slot="start">
-        <img [src]="material.url" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ material.fecha | date:'dd/MM/yyyy' }}</h2>
-        <p>{{ obtenerNombreAsignatura(material.asignaturaId) }}</p>
-      </ion-label>
-      <ion-icon *ngIf="materialSeleccionado?.id === material.id" name="checkmark-circle" color="success" slot="end"></ion-icon>
-      <ion-button fill="clear" slot="end" (click)="compartirPorShare(material); $event.stopPropagation()">
-        <ion-icon name="share-social-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </ion-list>
+  <!-- Estado BLE -->
+  <div class="ble-status-card">
+    <ion-icon name="bluetooth-outline" class="ble-icon"
+              [style.color]="bleAvailable ? '#51CF66' : '#9CA3AF'"></ion-icon>
 
-  <ion-item *ngIf="materiales.length === 0" lines="none">
-    <ion-label class="ion-text-center">
-      <p>No hay materiales para compartir.</p>
-    </ion-label>
-  </ion-item>
+    <div class="ble-info">
+      <h3>{{ bleAvailable ? 'Bluetooth LE activo' : 'Bluetooth LE no disponible' }}</h3>
+      <p>{{ bleAvailable ? 'Puedes compartir materiales con dispositivos cercanos.' : 'Activa Bluetooth para usar esta función.' }}</p>
+    </div>
+  </div>
 
-  <!-- Sección: Escaneo BLE -->
-  <ion-list-header>
-    <ion-label>2. Busca dispositivos cercanos</ion-label>
-  </ion-list-header>
+  <!-- Selección de material -->
+  <h2 class="section-title">1. Selecciona un material</h2>
 
-  <ion-item lines="none">
+  <div *ngIf="materiales.length === 0" class="empty-state">
+    <ion-icon name="document-outline"></ion-icon>
+    <p>No hay materiales para compartir.</p>
+  </div>
+
+  <div class="material-card"
+       *ngFor="let material of materiales"
+       [class.selected]="materialSeleccionado?.id === material.id"
+       (click)="seleccionarMaterial(material)">
+
+    <img [src]="material.url" class="material-thumb"/>
+
+    <div class="material-info">
+      <h3>{{ material.fecha | date:'dd/MM/yyyy' }}</h3>
+      <p>{{ obtenerNombreAsignatura(material.asignaturaId) }}</p>
+    </div>
+
+    <ion-icon *ngIf="materialSeleccionado?.id === material.id"
+              name="checkmark-circle"
+              class="check-icon"></ion-icon>
+
+    <ion-button fill="clear" class="share-btn"
+                (click)="compartirPorShare(material); $event.stopPropagation()">
+      <ion-icon name="share-social-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Escaneo BLE -->
+  <h2 class="section-title">2. Busca dispositivos cercanos</h2>
+
+  <div class="scan-card">
     <ion-button *ngIf="!isScanning"
                 expand="block"
                 (click)="escanearDispositivos()"
                 [disabled]="!bleAvailable">
-      <ion-icon name="search" slot="start"></ion-icon>
+      <ion-icon name="search-outline" slot="start"></ion-icon>
       Escanear dispositivos BLE
     </ion-button>
+
     <ion-button *ngIf="isScanning"
                 expand="block"
                 color="danger"
                 (click)="detenerEscaneo()">
-      <ion-icon name="stop-circle" slot="start"></ion-icon>
+      <ion-icon name="stop-circle-outline" slot="start"></ion-icon>
       Detener escaneo
     </ion-button>
-  </ion-item>
 
-  <ion-progress-bar *ngIf="isScanning" type="indeterminate" color="primary"></ion-progress-bar>
+    <ion-progress-bar *ngIf="isScanning"
+                      type="indeterminate"
+                      color="primary"></ion-progress-bar>
+  </div>
 
-  <!-- Lista de dispositivos encontrados -->
-  <ion-list *ngIf="devices.length > 0">
-    <ion-list-header>
-      <ion-label>Dispositivos encontrados ({{ devices.length }})</ion-label>
-    </ion-list-header>
-    <ion-item *ngFor="let device of devices" button (click)="enviarPorBLE(device)">
-      <ion-icon name="bluetooth" slot="start" color="primary"></ion-icon>
-      <ion-label>
-        <h2>{{ device.name }}</h2>
+  <!-- Dispositivos encontrados -->
+  <div *ngIf="devices.length > 0">
+    <h2 class="section-title">Dispositivos encontrados ({{ devices.length }})</h2>
+
+    <div class="device-card" *ngFor="let device of devices" (click)="enviarPorBLE(device)">
+      <ion-icon name="bluetooth-outline" class="device-icon"></ion-icon>
+
+      <div class="device-info">
+        <h3>{{ device.name }}</h3>
         <p>{{ device.deviceId }}</p>
-      </ion-label>
-      <ion-icon name="send" slot="end" color="tertiary"></ion-icon>
-    </ion-item>
-  </ion-list>
+      </div>
 
-  <ion-item *ngIf="!isScanning && devices.length === 0 && bleAvailable" lines="none">
-    <ion-label class="ion-text-center">
-      <p>Presiona "Escanear" para buscar dispositivos cercanos.</p>
-    </ion-label>
-  </ion-item>
+      <ion-icon name="send-outline" class="send-icon"></ion-icon>
+    </div>
+  </div>
 
-  <!-- Fallback: compartir sin BLE -->
-  <ion-card *ngIf="!bleAvailable">
+  <!-- Estado vacío -->
+  <div *ngIf="!isScanning && devices.length === 0 && bleAvailable" class="empty-state">
+    <ion-icon name="search-outline"></ion-icon>
+    <p>Presiona "Escanear" para buscar dispositivos cercanos.</p>
+  </div>
+
+  <!-- Fallback sin BLE -->
+  <ion-card *ngIf="!bleAvailable" class="fallback-card">
     <ion-card-header>
       <ion-card-title>Compartir sin Bluetooth</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Bluetooth no está disponible. Puedes compartir materiales usando el botón de compartir
-        en cada material, que abrirá las opciones nativas de tu dispositivo.</p>
+      <p>Bluetooth no está disponible. Usa el botón de compartir en cada material.</p>
     </ion-card-content>
   </ion-card>
+
 </ion-content>

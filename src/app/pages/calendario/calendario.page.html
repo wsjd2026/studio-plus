@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -55,4 +55,80 @@
       </ion-label>
     </ion-item>
   </ion-list>
+</ion-content> -->
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title class="titulo-header">
+      Calendario Académico
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="agregarEvento()">
+        <ion-icon name="add-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="calendario-content">
+
+  <!-- Calendario compacto -->
+  <div class="calendar-container">
+    <ion-datetime
+      presentation="date"
+      [(ngModel)]="fechaSeleccionada"
+      (ionChange)="onFechaChange()"
+      class="calendar-widget">
+    </ion-datetime>
+  </div>
+
+  <!-- Eventos del día -->
+  <div class="section" *ngIf="eventosDelDia.length > 0">
+    <h2 class="section-title">
+      Eventos del {{ fechaSeleccionada | date:'dd/MM/yyyy' }}
+    </h2>
+
+    <div class="evento-card" *ngFor="let evento of eventosDelDia">
+      <div class="evento-icon" [style.background]="evento.tipo === 'feriado' ? '#FF6B6B' : '#4C6EF5'">
+        <ion-icon [name]="evento.tipo === 'feriado' ? 'calendar-outline' : 'school-outline'"></ion-icon>
+      </div>
+
+      <div class="evento-info">
+        <h3>{{ evento.titulo }}</h3>
+        <p>{{ evento.descripcion }}</p>
+      </div>
+
+      <ion-badge class="evento-badge" [color]="evento.tipo === 'feriado' ? 'danger' : 'primary'">
+        {{ evento.tipo }}
+      </ion-badge>
+    </div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div class="empty-state" *ngIf="eventosDelDia.length === 0">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <p>No hay eventos para esta fecha.</p>
+  </div>
+
+  <!-- Próximos eventos -->
+  <div class="section" *ngIf="proximosEventos.length > 0">
+    <h2 class="section-title">Próximos eventos</h2>
+
+    <div class="evento-card" *ngFor="let evento of proximosEventos">
+      <div class="evento-icon" [style.background]="evento.tipo === 'feriado' ? '#FF6B6B' : '#4C6EF5'">
+        <ion-icon [name]="evento.tipo === 'feriado' ? 'calendar-outline' : 'school-outline'"></ion-icon>
+      </div>
+
+      <div class="evento-info">
+        <h3>{{ evento.titulo }}</h3>
+        <p>{{ evento.fecha | date:'dd/MM/yyyy' }} — {{ evento.descripcion }}</p>
+      </div>
+    </div>
+  </div>
+
 </ion-content>

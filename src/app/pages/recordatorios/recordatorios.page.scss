@@ -1,4 +1,109 @@
-.completado {
-  text-decoration: line-through;
+// .completado {
+//   text-decoration: line-through;
+//   opacity: 0.6;
+// }
+
+
+:root {
+  --color-primary: #4C6EF5;
+  --color-bg: #F5F7FA;
+  --color-card: #FFFFFF;
+  --color-text-strong: #1E1E1E;
+  --color-text-medium: #6B7280;
+}
+
+.recordatorios-content {
+  background: var(--color-bg);
+  padding: 16px;
+}
+
+/* TARJETAS */
+.recordatorio-card {
+  background: var(--color-card);
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease;
+}
+
+.recordatorio-card:active {
+  transform: scale(0.98);
+}
+
+/* BARRA DE PRIORIDAD */
+.prioridad-bar {
+  width: 8px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* CONTENIDO */
+.recordatorio-content {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+}
+
+.info {
+  margin-left: 12px;
+  flex: 1;
+}
+
+.info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.asignatura {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: var(--color-text-medium);
+}
+
+.fecha {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: var(--color-text-medium);
+}
+
+/* BADGE */
+.badge {
+  margin-left: 12px;
+}
+
+/* COMPLETADO */
+.recordatorio-card.completado {
   opacity: 0.6;
+}
+
+.recordatorio-card.completado h3,
+.recordatorio-card.completado p {
+  text-decoration: line-through;
+}
+
+/* BOTÓN ELIMINAR */
+.delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+}
+
+/* ESTADO VACÍO */
+.empty-state {
+  text-align: center;
+  margin-top: 60px;
+  color: var(--color-text-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 64px;
+  color: var(--color-primary);
+  margin-bottom: 12px;
 }

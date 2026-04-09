@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -39,4 +39,73 @@
       <p>No hay recordatorios. Toca + arriba para crear uno.</p>
     </ion-label>
   </ion-item>
+</ion-content> -->
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title class="titulo-header">
+      Recordatorios
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="agregarRecordatorio()">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="recordatorios-content">
+
+  <!-- Estado vacío -->
+  <div *ngIf="recordatorios.length === 0" class="empty-state">
+    <ion-icon name="notifications-outline"></ion-icon>
+    <p>No hay recordatorios. Toca el botón para crear uno.</p>
+  </div>
+
+  <!-- Lista de recordatorios -->
+  <div class="recordatorio-card"
+       *ngFor="let rec of recordatorios"
+       [class.completado]="rec.completado">
+
+    <!-- Barra de prioridad -->
+    <div class="prioridad-bar"
+         [style.background]="rec.prioridad === 'alta' ? '#FF6B6B' :
+                             rec.prioridad === 'media' ? '#FCC419' : '#ADB5BD'">
+    </div>
+
+    <!-- Contenido -->
+    <div class="recordatorio-content" (click)="actualizarCompletado(rec)">
+      <ion-checkbox [(ngModel)]="rec.completado"></ion-checkbox>
+
+      <div class="info">
+        <h3>{{ rec.titulo }}</h3>
+        <p class="asignatura">{{ obtenerNombreAsignatura(rec.asignaturaId) }}</p>
+        <p class="fecha">{{ rec.fechaLimite | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <ion-badge class="badge"
+                 [color]="rec.prioridad === 'alta' ? 'danger' :
+                          rec.prioridad === 'media' ? 'warning' : 'medium'">
+        {{ rec.prioridad }}
+      </ion-badge>
+    </div>
+
+    <!-- Botón eliminar -->
+    <ion-button fill="clear" class="delete-btn" (click)="eliminarRecordatorio(rec.id)">
+      <ion-icon name="trash-outline" color="danger"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Botón flotante para agregar -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="agregarRecordatorio()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>
