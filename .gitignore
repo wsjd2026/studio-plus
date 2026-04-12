@@ -68,3 +68,25 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+# Dependencias
+/node_modules
+
+# Archivos de construcción
+/www
+/*.apk
+/*.aab
+
+# Archivos de Capacitor
+/android
+/ios
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de editor
+.vscode/
+.idea/
+
+# Archivos de entorno
+.env
