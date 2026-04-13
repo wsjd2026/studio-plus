@@ -1,7 +1,7 @@
 # Informe de Pruebas e Incidencias (QA)
 **Proyecto:** Estudio+ (Proyecto 4)
 **Asignatura:** Programación de Dispositivos Móviles (ISW-307)
-**Responsable de QA:** [Escribe tu nombre aquí]
+**Responsable de QA:** [Wilson Cabrera]
 **Fecha de evaluación:** 13 de abril de 2026
 
 ## 1. Resumen de Pruebas Realizadas
