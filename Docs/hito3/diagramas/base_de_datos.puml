@@ -1,0 +1,56 @@
+@startuml Diagrama de Base de Datos - Estudio+
+skinparam linetype ortho
+skinparam roundcorner 5
+
+entity "asignaturas" as asig {
+  * **id** : TEXT <<PK>>
+  --
+  nombre : TEXT
+  color : TEXT
+  docente : TEXT
+  descripcion : TEXT
+}
+
+entity "recordatorios" as rec {
+  * **id** : TEXT <<PK>>
+  --
+  titulo : TEXT
+  fecha_limite : TEXT (ISO)
+  prioridad : TEXT {alta|media|baja}
+  * asignatura_id : TEXT <<FK>>
+  completado : INTEGER {0|1}
+}
+
+entity "materiales" as mat {
+  * **id** : TEXT <<PK>>
+  --
+  * asignatura_id : TEXT <<FK>>
+  titulo : TEXT (nullable)
+  tipo : TEXT {foto|archivo}
+  url : TEXT
+  fecha : TEXT
+  sync : INTEGER {0|1}
+}
+
+entity "notas" as not {
+  * **id** : TEXT <<PK>>
+  --
+  titulo : TEXT
+  contenido : TEXT
+  fecha_modificacion : TEXT
+  sincronizada : INTEGER {0|1}
+}
+
+entity "sync_queue" as sq {
+  * **id** : INTEGER <<PK>> AUTO
+  --
+  tabla : TEXT
+  operacion : TEXT {INSERT|UPDATE|DELETE}
+  datos : TEXT (JSON)
+  procesado : INTEGER {0|1}
+  fecha : TEXT
+}
+
+asig ||--o{ rec : "1 a muchos"
+asig ||--o{ mat : "1 a muchos"
+@enduml

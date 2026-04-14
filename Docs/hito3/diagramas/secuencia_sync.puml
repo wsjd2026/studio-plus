@@ -1,0 +1,51 @@
+@startuml Secuencia - Sincronizar Notas
+skinparam sequenceArrowThickness 1.5
+
+participant "NetworkService" as NET
+participant "SyncService" as SYNC
+participant "DatabaseService" as DB
+participant "HttpClient" as HTTP
+participant "Servidor\n(json-server)" as SRV
+participant "NotaService" as NS
+database "SQLite" as SQL
+
+NET -> NET : Detecta conexion\nrestaurada
+activate NET
+
+NET -> SYNC : callback onReconnect()\n=> procesarCola()
+activate SYNC
+
+SYNC -> DB : query("SELECT * FROM\nsync_queue WHERE\nprocesado = 0")
+activate DB
+DB -> SQL : SELECT
+SQL --> DB : items pendientes
+DB --> SYNC : lista de items
+deactivate DB
+
+loop Para cada item pendiente
+  SYNC -> HTTP : POST/PUT/DELETE\n{apiUrl}/{tabla}
+  activate HTTP
+  HTTP -> SRV : Envia operacion
+  SRV --> HTTP : 200 OK
+  HTTP --> SYNC : respuesta
+  deactivate HTTP
+
+  SYNC -> DB : run("UPDATE sync_queue\nSET procesado = 1\nWHERE id = ?")
+  activate DB
+  DB -> SQL : UPDATE
+  SQL --> DB : OK
+  deactivate DB
+end
+
+SYNC -> NS : marcarSincronizadas(ids)
+activate NS
+NS -> DB : run("UPDATE notas SET\nsincronizada = 1\nWHERE id IN (...)")
+DB -> SQL : UPDATE
+SQL --> DB : OK
+NS --> SYNC : OK
+deactivate NS
+
+SYNC --> NET : { enviados, fallidos }
+deactivate SYNC
+deactivate NET
+@enduml

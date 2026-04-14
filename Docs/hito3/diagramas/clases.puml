@@ -1,0 +1,136 @@
+@startuml Diagrama de Clases - Estudio+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty methods
+
+package "Modelos" #F5F5F5 {
+  class Asignatura {
+    +id: string
+    +nombre: string
+    +color: string
+    +docente: string
+    +descripcion: string
+  }
+
+  class Recordatorio {
+    +id: string
+    +titulo: string
+    +fechaLimite: Date
+    +prioridad: alta | media | baja
+    +asignaturaId: string
+    +completado: boolean
+  }
+
+  class Material {
+    +id: string
+    +asignaturaId: string
+    +titulo?: string
+    +tipo: foto | archivo
+    +url: string
+    +fecha: Date
+    +sync: boolean
+  }
+
+  class Nota {
+    +id: string
+    +titulo: string
+    +contenido: string
+    +fechaModificacion: Date
+    +sincronizada: boolean
+  }
+
+  class EventoCalendario {
+    +id: string
+    +titulo: string
+    +fecha: Date
+    +descripcion?: string
+    +tipo: feriado | academico
+  }
+}
+
+package "Servicios" #E8F5E9 {
+  class DatabaseService {
+    -sqlite: SQLiteConnection
+    -db: SQLiteDBConnection
+    -DB_NAME: string
+    +initializeDatabase(): Promise<void>
+    +run(sql, values): Promise<any>
+    +query(sql, values): Promise<any[]>
+    +execute(sql): Promise<any>
+    -createTables(): Promise<void>
+  }
+
+  class AsignaturaService {
+    +getAsignaturas(): Promise<Asignatura[]>
+    +getAsignaturaById(id): Promise<Asignatura>
+    +addAsignatura(a): Promise<void>
+    +updateAsignatura(id, a): Promise<void>
+    +deleteAsignatura(id): Promise<void>
+  }
+
+  class RecordatorioService {
+    +getRecordatorios(): Promise<Recordatorio[]>
+    +addRecordatorio(r): Promise<void>
+    +updateRecordatorio(id, r): Promise<void>
+    +deleteRecordatorio(id): Promise<void>
+    -requestPermissions(): Promise<void>
+  }
+
+  class MaterialService {
+    +getMateriales(): Promise<Material[]>
+    +getMaterialesPorAsignatura(id): Promise<Material[]>
+    +tomarFoto(asignaturaId): Promise<Material>
+    +deleteMaterial(id): Promise<void>
+  }
+
+  class NotaService {
+    +getNotas(): Promise<Nota[]>
+    +addNota(n): Promise<void>
+    +updateNota(id, n): Promise<void>
+    +deleteNota(id): Promise<void>
+    +marcarSincronizadas(ids): Promise<void>
+    +getNotasPendientes(): Promise<Nota[]>
+  }
+
+  class CalendarioService {
+    +getFeriados(year, country): Observable
+    +getEventosAcademicos(): Observable
+  }
+
+  class BluetoothService {
+    +devices$: BehaviorSubject
+    +isScanning$: BehaviorSubject
+    +bleAvailable: boolean
+    +initialize(): Promise<boolean>
+    +scanDevices(): Promise<void>
+    +connectToDevice(id): Promise<boolean>
+    +sendData(id, data): Promise<boolean>
+    +compartirPorShare(uri, name): Promise<void>
+  }
+
+  class NetworkService {
+    +isOnline$: BehaviorSubject<boolean>
+    +isOnline: boolean
+    +onReconnect(callback): void
+    -initNetworkListener(): void
+  }
+
+  class SyncService {
+    +procesarCola(): Promise<{enviados, fallidos}>
+    +getPendingCount(): Promise<number>
+    +limpiarCola(): Promise<void>
+    -enviarAlServidor(item): Promise<void>
+  }
+}
+
+AsignaturaService --> DatabaseService
+RecordatorioService --> DatabaseService
+MaterialService --> DatabaseService
+NotaService --> DatabaseService
+SyncService --> DatabaseService
+SyncService --> NetworkService
+CalendarioService --> "HttpClient" : consume API
+
+Asignatura "1" -- "*" Recordatorio : tiene >
+Asignatura "1" -- "*" Material : tiene >
+@enduml

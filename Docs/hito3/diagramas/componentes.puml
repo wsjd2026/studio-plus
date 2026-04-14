@@ -1,0 +1,77 @@
+@startuml Diagrama de Componentes - Estudio+
+skinparam componentStyle uml2
+skinparam linetype ortho
+
+package "Capa de Presentacion" #E3F2FD {
+  [AppComponent\n(Menu lateral)] as APP
+  [AsignaturasPage] as PG_ASIG
+  [RecordatoriosPage] as PG_REC
+  [MapaPage] as PG_MAP
+  [MaterialesPage] as PG_MAT
+  [NotasPage] as PG_NOT
+  [CalendarioPage] as PG_CAL
+  [CompartirPage] as PG_COM
+}
+
+package "Capa de Logica de Negocio" #E8F5E9 {
+  [AsignaturaService] as SV_ASIG
+  [RecordatorioService] as SV_REC
+  [MaterialService] as SV_MAT
+  [NotaService] as SV_NOT
+  [CalendarioService] as SV_CAL
+  [BluetoothService] as SV_BLE
+  [NetworkService] as SV_NET
+  [SyncService] as SV_SYNC
+  [DatabaseService] as SV_DB
+}
+
+package "Capa de Persistencia y Hardware" #FFF3E0 {
+  database "SQLite\n(estudio_plus)" as SQLITE
+  storage "Filesystem\n(fotos)" as FILES
+  component "Camera" as CAM
+  component "Geolocation\n+ Leaflet" as GEO
+  component "LocalNotifications" as NOTIF
+  component "Network" as NETPLUG
+  component "BLE" as BLE
+  component "Share" as SHARE
+}
+
+cloud "Servicios Externos" #F3E5F5 {
+  [API Nager.Date\n(feriados)] as API_NAG
+  [json-server\n(sync)] as API_SYNC
+}
+
+PG_ASIG --> SV_ASIG
+PG_REC --> SV_REC
+PG_REC --> SV_ASIG
+PG_MAT --> SV_MAT
+PG_MAT --> SV_ASIG
+PG_NOT --> SV_NOT
+PG_NOT --> SV_SYNC
+PG_NOT --> SV_NET
+PG_CAL --> SV_CAL
+PG_COM --> SV_MAT
+PG_COM --> SV_BLE
+APP --> SV_DB
+APP --> SV_NET
+APP --> SV_SYNC
+
+SV_ASIG --> SV_DB
+SV_REC --> SV_DB
+SV_MAT --> SV_DB
+SV_NOT --> SV_DB
+SV_SYNC --> SV_DB
+SV_SYNC --> SV_NET
+
+SV_DB --> SQLITE
+SV_MAT --> FILES
+SV_MAT --> CAM
+PG_MAP --> GEO
+SV_REC --> NOTIF
+SV_NET --> NETPLUG
+SV_BLE --> BLE
+SV_BLE --> SHARE
+
+SV_CAL --> API_NAG
+SV_SYNC --> API_SYNC
+@enduml

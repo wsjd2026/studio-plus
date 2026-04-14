@@ -1,0 +1,38 @@
+@startuml Casos de Uso - Estudio+
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+actor "Estudiante" as est
+
+rectangle "Estudio+" {
+  usecase "Gestionar\nasignaturas" as UC1
+  usecase "Gestionar\nrecordatorios" as UC2
+  usecase "Notificar\nrecordatorio" as UC2a
+  usecase "Ver mapa\ndel campus" as UC3
+  usecase "Obtener\ngeolocalizacion" as UC3a
+  usecase "Trazar ruta\na destino" as UC3b
+  usecase "Capturar material\nde estudio" as UC4
+  usecase "Gestionar\nnotas offline" as UC5
+  usecase "Sincronizar\nnotas" as UC5a
+  usecase "Consultar calendario\nacademico" as UC6
+  usecase "Consumir API\nde feriados" as UC6a
+  usecase "Compartir\napuntes" as UC7
+  usecase "Escanear\ndispositivos BLE" as UC7a
+}
+
+est --> UC1
+est --> UC2
+est --> UC3
+est --> UC4
+est --> UC5
+est --> UC6
+est --> UC7
+
+UC2 <.. UC2a : <<extend>>
+UC3 ..> UC3a : <<include>>
+UC3 <.. UC3b : <<extend>>
+UC5 <.. UC5a : <<extend>>
+UC6 ..> UC6a : <<include>>
+UC7 <.. UC7a : <<extend>>
+@enduml

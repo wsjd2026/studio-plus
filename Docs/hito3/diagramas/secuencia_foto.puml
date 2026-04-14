@@ -1,0 +1,49 @@
+@startuml Secuencia - Tomar Foto
+skinparam sequenceArrowThickness 1.5
+skinparam participantPadding 10
+
+actor Usuario
+participant "MaterialesPage" as MP
+participant "MaterialService" as MS
+participant "Camera\n(Capacitor)" as CAM
+participant "Filesystem\n(Capacitor)" as FS
+participant "DatabaseService" as DB
+database "SQLite" as SQL
+
+Usuario -> MP : Presiona "Tomar foto"
+activate MP
+
+MP -> MS : tomarFoto(asignaturaId)
+activate MS
+
+MS -> CAM : Camera.getPhoto(\n  quality: 70,\n  source: CAMERA)
+activate CAM
+CAM --> MS : { webPath, format }
+deactivate CAM
+
+MS -> MS : Leer foto como base64
+
+MS -> FS : Filesystem.writeFile(\n  path: uuid.foto,\n  directory: Data)
+activate FS
+FS --> MS : { uri }
+deactivate FS
+
+MS -> DB : run("INSERT INTO materiales...")
+activate DB
+DB -> SQL : INSERT
+SQL --> DB : OK
+DB --> MS : resultado
+deactivate DB
+
+MS -> DB : run("INSERT INTO sync_queue...")
+activate DB
+DB -> SQL : INSERT (cola sync)
+SQL --> DB : OK
+deactivate DB
+
+MS --> MP : objeto Material
+deactivate MS
+
+MP --> Usuario : Actualiza galeria\ncon nueva foto
+deactivate MP
+@enduml
