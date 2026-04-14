@@ -52,8 +52,8 @@ Asegúrate de tener instalado lo siguiente:
 
 ## 🛠️ Desarrollado por
 
-Wagner Jose Santos Dominguez -100032468
-Wilson Cabrera Bonilla-100047576
-Carlos Alberto Abreu Payano - 100063167
-Arnold Mejía Tineo - 100036007
-Pavel Gonzalez - 100061480
+- Wagner Jose Santos Dominguez -100032468
+- Wilson Cabrera Bonilla-100047576
+- Carlos Alberto Abreu Payano - 100063167
+- Arnold Mejía Tineo - 100036007
+- Pavel Gonzalez - 100061480
