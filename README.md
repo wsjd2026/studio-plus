@@ -49,3 +49,11 @@ Asegúrate de tener instalado lo siguiente:
     git clone https://github.com/wsjd2026/studio-plus.git
     cd studio-plus# studio-plus
 # studio-plus
+
+## 🛠️ Desarrollado por
+
+- Wagner Jose Santos Dominguez -100032468
+- Wilson Cabrera Bonilla-100047576
+- Carlos Alberto Abreu Payano - 100063167
+- Arnold Mejía Tineo - 100036007
+- Pavel Gonzalez - 100061480
